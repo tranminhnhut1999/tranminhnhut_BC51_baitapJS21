@@ -24,6 +24,27 @@ function DSNV() {
       this.arr.splice(index, 1);
     }
   };
+
+  this.layThongTinNV = function (TaiKhoan) {
+    var index = this._timViTri(TaiKhoan);
+
+    if (index !== -1) {
+      var nv = this.arr[index];
+      return nv;
+    }
+  };
   this.capNhapNV = function () {};
   this.timNV = function () {};
 }
+DSNV.prototype.timKiemNV = function (keyword) {
+  var mangTimKiem = [];
+
+  for (var i = 0; i < this.arr.length; i++) {
+    var nv = this.arr[i];
+
+    if (nv.glTrongThang === keyword) {
+      mangTimKiem.push(nv);
+    }
+  }
+  return mangTimKiem;
+};

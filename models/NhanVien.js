@@ -15,8 +15,8 @@ function NhanVien(
   this.Email = _Email;
   this.MatKhau = _MatKhau;
   this.NgayLam = _NgayLam;
-  this.LuongCB = _LuongCB;
   this.ChucVu = _ChucVu;
+  this.LuongCB = _LuongCB;
   this.glTrongThang = _glTrongThang;
   this.XepLoai = _XepLoai;
   this.TongLuong = 0;
