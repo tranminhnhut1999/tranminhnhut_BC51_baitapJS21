@@ -7,7 +7,7 @@ function getEle(id) {
   return document.getElementById(id);
 }
 
-function layThongTinNV() {
+function layThongTinNV(isAdd) {
   var TaiKhoan = getEle("tknv").value;
   var HoTen = getEle("name").value;
   var Email = getEle("email").value;
@@ -22,35 +22,66 @@ function layThongTinNV() {
    */
   var isValid = true;
   // Tai khoan
-  isValid &= validation.kiemTraRong(
-    TaiKhoan,
-    "errortk",
-    "(*)Vui long nhap tai khoan"
-  );
+  if (isAdd) {
+    isValid &=
+      validation.kiemTraRong(
+        TaiKhoan,
+        "errortk",
+        "(*)Vui long nhap tai khoan"
+      ) &&
+      validation.kiemTraChuoiKiTu(
+        TaiKhoan,
+        "errortk",
+        "(*)vui long nhap ki tu 4-6 ",
+        4,
+        6
+      );
+  }
   //Ho ten
-  isValid &= validation.kiemTraRong(
-    HoTen,
-    "errorname",
-    "(*)Vui long nhap ho ten"
-  );
+  isValid &=
+    validation.kiemTraRong(HoTen, "errorname", "(*)Vui long nhap ho ten") &&
+    validation.kiemTraChuoiKiTu(
+      HoTen,
+      "errorname",
+      "(*) Vui long nhap chuoi ki tu"
+    );
   // Email
-  isValid &= validation.kiemTraRong(
-    Email,
-    "erroremail",
-    "(*)Vui long nhap email"
-  );
+  isValid &=
+    validation.kiemTraRong(Email, "erroremail", "(*)Vui long nhap email") &&
+    validation.checkPattern(
+      Email,
+      "erroremail",
+      "(*)Vui long nhap email dung dinh dang",
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    );
   // Mat Khau
-  isValid &= validation.kiemTraRong(
-    MatKhau,
-    "errorpassword",
-    "(*)Vui long nhap mat khau"
-  );
+  isValid &=
+    validation.kiemTraRong(
+      MatKhau,
+      "errorpassword",
+      "(*)Vui long nhap mat khau"
+    ) &&
+    validation.checkPattern(
+      MatKhau,
+      "errorpassword",
+      "(*) Vui long nhap MK co ki tu dac biet, so, in hoa, thuong ",
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{0,}$/
+    );
   // Ngay lam
   isValid &= validation.kiemTraRong(
     NgayLam,
     "errorngaylam",
     "(*)Vui long chon ngay lam"
   );
+  /*&&
+    validation.checkPattern(
+      NgayLam,
+      "errorngaylam",
+      "(*) Vui long nhap theo dinh dang mm/dd/yyyy "
+      "mm / dd / yyyy",
+      /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/
+
+    );*/
   // Luong co ban
   isValid &= validation.kiemTraRong(
     LuongCB,
@@ -69,7 +100,7 @@ function layThongTinNV() {
     "errorgioLam",
     "(*)Vui long nhap gio lam"
   );
-  if (TaiKhoan === "") {
+  if (isValid) {
     var nv = new NhanVien(
       TaiKhoan,
       HoTen,
@@ -80,7 +111,10 @@ function layThongTinNV() {
       ChucVu,
       glTrongThang
     );
-
+    // loại nv
+    nv.loaiNV();
+    // tính lương
+    nv.tinhTL();
     return nv;
   }
   return null;
@@ -99,8 +133,8 @@ function renderTable(data) {
     <td>${nv.Email}</td>
     <td>${nv.NgayLam}</td>
     <td>${nv.ChucVu}</td>
-    <td>${nv.LuongCB}</td>
-    <td>${nv.glTrongThang}</td>
+    <td>${nv.TongLuong}</td>
+    <td>${nv.XepLoai}</td>
     <td>
         <button class="btn btn-info" onclick="suaNV('${nv.TaiKhoan}')">Sửa</button>
         <button class="btn btn-danger" onclick="xoaNV('${nv.TaiKhoan}')">Xoá</button>
@@ -112,7 +146,9 @@ function renderTable(data) {
 }
 
 function xoaNV(TaiKhoan) {
-  console.log(TaiKhoan);
+  dsnv.xoaNV(TaiKhoan);
+  renderTable(dsnv.arr);
+  setLocalStorage();
 }
 
 function suaNV(TaiKhoan) {
@@ -154,7 +190,7 @@ getEle("txtSearch").addEventListener("keyup", searchNV);
 
 // THêm NV
 function themNV() {
-  var nv = layThongTinNV();
+  var nv = layThongTinNV(true);
   if (nv) {
     dsnv.themNV(nv);
     // render dsnv ra ngoài table

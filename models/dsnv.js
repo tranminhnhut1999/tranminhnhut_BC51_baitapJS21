@@ -20,7 +20,6 @@ function DSNV() {
     var index = this._timViTri(TaiKhoan);
 
     if (index !== -1) {
-      //xoá phần tử của mảng: dựa vào index và số lượng phần tử cần xoá
       this.arr.splice(index, 1);
     }
   };
@@ -41,8 +40,10 @@ DSNV.prototype.timKiemNV = function (keyword) {
 
   for (var i = 0; i < this.arr.length; i++) {
     var nv = this.arr[i];
+    var keywordLowerCase = keyword.toLowerCase();
+    var loaiNVLowerCase = nv.XepLoai.toLowerCase();
 
-    if (nv.glTrongThang === keyword) {
+    if (loaiNVLowerCase.indexOf(keywordLowerCase) !== -1) {
       mangTimKiem.push(nv);
     }
   }

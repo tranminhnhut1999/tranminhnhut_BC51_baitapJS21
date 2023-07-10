@@ -40,11 +40,27 @@ function Validation() {
 
     if (value.match(letter)) {
       getEle(errorId).innerHTML = "";
-      getELE(errorId).styel.display = "none";
+      getEle(errorId).style.display = "none";
       return true;
     }
-    getELE(errorId).innerHTML = mess;
-    getELE(errorId).styel.display = "block";
+    getEle(errorId).innerHTML = mess;
+    getEle(errorId).style.display = "block";
+    return false;
+  };
+
+  this.checkPattern = function (value, errorId, mess,data, letter) {
+    if (value.match(data,letter)) {
+      //true
+      getEle(errorId).innerHTML = "";
+      getEle(errorId).style.display = "none";
+
+      return true;
+    }
+
+    //false
+    getEle(errorId).innerHTML = mess;
+    getEle(errorId).style.display = "block";
+
     return false;
   };
 }
