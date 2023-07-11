@@ -45,6 +45,7 @@ function layThongTinNV(isAdd) {
       "errorname",
       "(*) Vui long nhap chuoi ki tu"
     );
+
   // Email
   isValid &=
     validation.kiemTraRong(Email, "erroremail", "(*)Vui long nhap email") &&
@@ -54,6 +55,7 @@ function layThongTinNV(isAdd) {
       "(*)Vui long nhap email dung dinh dang",
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     );
+
   // Mat Khau
   isValid &=
     validation.kiemTraRong(
@@ -67,33 +69,35 @@ function layThongTinNV(isAdd) {
       "(*) Vui long nhap MK co ki tu dac biet, so, in hoa, thuong ",
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{0,}$/
     );
+
   // Ngay lam
-  isValid &= validation.kiemTraRong(
-    NgayLam,
-    "errorngaylam",
-    "(*)Vui long chon ngay lam"
-  );
-  /*&&
+  isValid &=
+    validation.kiemTraRong(
+      NgayLam,
+      "errorngaylam",
+      "(*)Vui long chon ngay lam"
+    ) &&
     validation.checkPattern(
       NgayLam,
       "errorngaylam",
-      "(*) Vui long nhap theo dinh dang mm/dd/yyyy "
-      "mm / dd / yyyy",
-      /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/
+      "(*) Vui long nhap theo dinh dang mm/dd/yyyy ",
+      /^[0-9]+$/
+    );
 
-    );*/
   // Luong co ban
   isValid &= validation.kiemTraRong(
     LuongCB,
     "errorluongCB",
     "(*)Vui long nhap luong co ban"
   );
+
   // Chuc Vu
   isValid &= validation.kiemTraChucVu(
     "chucvu",
     "errorchucvu",
     "(*)Vui long chon chuc vu"
   );
+
   // gio lam trong thang
   isValid &= validation.kiemTraRong(
     glTrongThang,
@@ -126,6 +130,11 @@ function renderTable(data) {
   for (var i = 0; i < data.length; i++) {
     var nv = data[i];
 
+    var VND = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
+
     content += `
     <tr>
     <td>${nv.TaiKhoan}</td>
@@ -133,11 +142,15 @@ function renderTable(data) {
     <td>${nv.Email}</td>
     <td>${nv.NgayLam}</td>
     <td>${nv.ChucVu}</td>
-    <td>${nv.TongLuong}</td>
+    <td>${VND.format(nv.TongLuong)}</td>
     <td>${nv.XepLoai}</td>
     <td>
-        <button class="btn btn-info" onclick="suaNV('${nv.TaiKhoan}')">Sửa</button>
-        <button class="btn btn-danger" onclick="xoaNV('${nv.TaiKhoan}')">Xoá</button>
+        <button class="btn btn-info" onclick="suaNV('${
+          nv.TaiKhoan
+        }')">Sửa</button>
+        <button class="btn btn-danger" onclick="xoaNV('${
+          nv.TaiKhoan
+        }')">Xoá</button>
     </td>
 </tr>
 `;
@@ -156,6 +169,8 @@ function suaNV(TaiKhoan) {
 
   if (nv) {
     getEle("tknv").value = nv.TaiKhoan;
+    getEle("tknv").disabled = true;
+
     getEle("name").value = nv.HoTen;
     getEle("email").value = nv.Email;
     getEle("password").value = nv.MatKhau;
@@ -163,6 +178,8 @@ function suaNV(TaiKhoan) {
     getEle("chucvu").value = nv.ChucVu;
     getEle("luongCB").value = nv.LuongCB;
     getEle("gioLam").value = nv.glTrongThang;
+
+    getEle("btnThemNV").style.display = "none";
   }
 }
 
@@ -173,6 +190,15 @@ function xoaSV(TaiKhoan) {
   setLocalStorage();
 }
 
+// Cap nhat nv
+getEle("btnCapNhat").onclick = function () {
+  var nv = layThongTinNV(false);
+  if (nv) {
+    dsnv.capNhapNV(nv);
+    renderTable(dsnv.arr);
+    setLocalStorage();
+  }
+};
 function getLocalStorage() {
   var dataString = localStorage.getItem("DSNV");
   var dataJson = JSON.parse(dataString);
@@ -182,11 +208,11 @@ function getLocalStorage() {
 
 // Tim NV
 function searchNV() {
-  var search = getEle("txtSearch").value;
+  var search = getEle("searchName").value;
   var mangTimKiem = dsnv.timKiemNV(search);
   renderTable(mangTimKiem);
 }
-getEle("txtSearch").addEventListener("keyup", searchNV);
+getEle("searchName").addEventListener("keyup", searchNV);
 
 // THêm NV
 function themNV() {

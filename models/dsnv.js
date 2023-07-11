@@ -32,8 +32,14 @@ function DSNV() {
       return nv;
     }
   };
-  this.capNhapNV = function () {};
-  this.timNV = function () {};
+  this.capNhapNV = function (nv) {
+    document.getElementById("errortk").style.display = "none";
+    document.getElementById("errortk").innerHTML = "";
+    var index = this._timViTri(nv.TaiKhoan);
+    if (index !== -1) {
+      this.arr[index] = nv;
+    }
+  };
 }
 DSNV.prototype.timKiemNV = function (keyword) {
   var mangTimKiem = [];

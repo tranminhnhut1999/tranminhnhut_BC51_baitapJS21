@@ -48,8 +48,8 @@ function Validation() {
     return false;
   };
 
-  this.checkPattern = function (value, errorId, mess,data, letter) {
-    if (value.match(data,letter)) {
+  this.checkPattern = function (value, errorId, mess, letter) {
+    if (value.match(letter)) {
       //true
       getEle(errorId).innerHTML = "";
       getEle(errorId).style.display = "none";
